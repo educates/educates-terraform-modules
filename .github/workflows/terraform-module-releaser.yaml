@@ -31,4 +31,4 @@ jobs:
           module-change-exclude-patterns: .gitignore,*.md,*.tftest.hcl,tests/**
           module-asset-exclude-patterns: .gitignore,*.md,*.tftest.hcl,tests/**
           use-ssh-source-format: false
-          module-path-ignore: 'root-modules,**/scripts/**'
+          module-path-ignore: 'root-modules,infrastructure/**/scripts/**'
