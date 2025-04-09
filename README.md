@@ -7,7 +7,7 @@ There's also some [root-modules](./root-modules/) that serve as example showing 
 
 - [gke](./root-modules/educates-on-gke/)
 
-## Release a module
+## Release a module
 
 This repository uses https://github.com/techpivot/terraform-module-releaser to have GitHub Actions releasing the modules.
 See configuration at [terraform-module-releaser.yaml](./.github/workflows/terraform-module-releaser.yaml)
@@ -25,11 +25,11 @@ Examples:
 - fix: improve example variable
 - feat: add another demo module
 
-## TODO
+## TODO
 
-- [*] Make this into educates-terraform-modules GitHub repository
-- [*] Adopt best practices for module naming as suggested in https://github.com/techpivot/terraform-module-releaser
-- [*] Make the modules releasable via https://github.com/techpivot/terraform-module-releaser
+- [x] Make this into educates-terraform-modules GitHub repository
+- [x] Adopt best practices for module naming as suggested in https://github.com/techpivot/terraform-module-releaser
+- [x] Make the modules releasable via https://github.com/techpivot/terraform-module-releaser
 - [ ] Validate eks-for-educates module
 - [ ] EKS root module
 - [ ] Adopt terraform-docs for modules https://terraform-docs.io/
