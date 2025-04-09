@@ -13,11 +13,11 @@ There's an example configuration file at [main.tfvars.example](main.tfvars.examp
 ### Create
 
 ```
-terraform apply -var-file main.tfvars -auto-approve
+terraform apply -var-file main.tfvars
 ```
 
 ### Destroy
 
 ```
-terraform destroy -var-file main.tfvars -auto-approve
+terraform destroy -var-file main.tfvars
 ```
