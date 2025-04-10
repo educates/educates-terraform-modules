@@ -24,8 +24,8 @@ you can provide a a variable `educates_config.config_file` with Educates Configu
 - `wildcard_domain`: (__REQUIRED__) Wildcard domain to use for services deployed in the cluster. No defaults.
 - `educates_config`: Version of Educates. If a file named `educates-app-config.yaml` is present, configuration 
   will be merged with the one in version control
-- `educates_app`: This will set the namespace and sync_periods for the kapp-controller App. 
-  This typically will not need to be changed. sync_period is 365 days.
+- `educates_app`: This will set the namespace and syncPeriod for the kapp-controller App. 
+  This typically will not need to be changed. syncPeriod is 365 days.
 - `aws_config`: Specific configuration for AWS Infrastructure provider
 - `gcp_config`: Specific configuration for GCP Infrastructure provider
 
