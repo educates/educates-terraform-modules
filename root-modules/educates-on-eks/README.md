@@ -1,6 +1,6 @@
-# Educates on GKE
+# Educates on EKS
 
-This module will create a GKE cluster and then provision Educates 3.x on top
+This module will create a EKS cluster and then provision Educates 3.x on top
 
 ## Configuration
 
