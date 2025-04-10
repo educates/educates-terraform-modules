@@ -30,8 +30,8 @@ Examples:
 - [x] Make this into educates-terraform-modules GitHub repository
 - [x] Adopt best practices for module naming as suggested in https://github.com/techpivot/terraform-module-releaser
 - [x] Make the modules releasable via https://github.com/techpivot/terraform-module-releaser
-- [ ] Validate eks-for-educates module
-- [ ] EKS root module
+- [x] Validate eks-for-educates module
+- [x] EKS root module
 - [ ] Adopt terraform-docs for modules https://terraform-docs.io/
 - [x] token-sa-kubeconfig module (working with EKS and GKE)
 - [ ] educates-gitops module
