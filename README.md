@@ -34,4 +34,5 @@ Examples:
 - [ ] EKS root module
 - [ ] Adopt terraform-docs for modules https://terraform-docs.io/
 - [x] token-sa-kubeconfig module (working with EKS and GKE)
-- [ ] educates-gitops module
+- [x] educates-gitops module
+- [ ] sample root-module with educates-gitops
