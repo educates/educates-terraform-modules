@@ -33,5 +33,5 @@ Examples:
 - [ ] Validate eks-for-educates module
 - [ ] EKS root module
 - [ ] Adopt terraform-docs for modules https://terraform-docs.io/
-- [ ] token-sa-kubeconfig module (working with EKS and GKE)
+- [x] token-sa-kubeconfig module (working with EKS and GKE)
 - [ ] educates-gitops module

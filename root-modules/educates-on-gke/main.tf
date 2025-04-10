@@ -41,3 +41,16 @@ module "educates" {
     dns_zone     = var.TLD
   }
 }
+
+module "token-sa-kubeconfig" {
+  source = "../../infrastructure/token-sa-kubeconfig"
+  # source = "github.com/educates/educates-terraform-modules.git//infrastructure/token-sa-kubeconfig?ref=develop"
+
+  cluster = {
+    name                   = var.cluster_name
+    host                   = module.gke_for_educates.kubernetes.host
+    cluster_ca_certificate = module.gke_for_educates.kubernetes.cluster_ca_certificate
+    token                  = module.gke_for_educates.kubernetes.token
+  }
+  kubeconfig_file = "${path.root}/kubeconfig-${var.cluster_name}-token.yaml"
+}

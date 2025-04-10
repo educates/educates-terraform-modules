@@ -523,7 +523,7 @@ spec:
                           via given service account, found in this namespace (optional;
                           v0.6.0+)
                         type: string
-                      sync_period:
+                      syncPeriod:
                         description: Specifies the length of time to wait, in time
                           + unit format, before reconciling. Always >= 30s. If value
                           below 30s is specified, 30s will be used. (optional; v0.9.0+;
@@ -1277,7 +1277,7 @@ spec:
                 description: Specifies that app should be deployed authenticated via
                   given service account, found in this namespace (optional; v0.6.0+)
                 type: string
-              sync_period:
+              syncPeriod:
                 description: Specifies the length of time to wait, in time + unit
                   format, before reconciling. Always >= 30s. If value below 30s is
                   specified, 30s will be used. (optional; v0.9.0+; default=30s)
@@ -1893,7 +1893,7 @@ spec:
                 description: Specifies service account that will be used to install
                   underlying package contents
                 type: string
-              sync_period:
+              syncPeriod:
                 description: Controls frequency of App reconciliation in time + unit
                   format. Always >= 30s. If value below 30s is specified, 30s will
                   be used.
@@ -2206,7 +2206,7 @@ spec:
                 description: Paused when set to true will ignore all pending changes,
                   once it set back to false, pending changes will be applied
                 type: boolean
-              sync_period:
+              syncPeriod:
                 description: Controls frequency of PackageRepository reconciliation
                 type: string
             required:

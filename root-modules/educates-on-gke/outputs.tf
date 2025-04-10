@@ -12,3 +12,7 @@ output "kubernetes" {
 output "educates" {
   value = module.educates.educates
 }
+
+output "token-sa-kubeconfig" {
+  value = module.token-sa-kubeconfig
+}

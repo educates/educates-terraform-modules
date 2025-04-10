@@ -183,7 +183,7 @@ metadata:
   name: educates
   namespace: "${var.educates_app.namespace}"
 spec:
-  sync_period: "${var.educates_app.sync_period}"
+  syncPeriod: "${var.educates_app.sync_period}"
   serviceAccountName: "${var.educates_app.namespace}"
   fetch:
     - imgpkgBundle:
