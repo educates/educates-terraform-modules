@@ -8,7 +8,7 @@ terraform {
       source  = "alekc/kubectl"
     }
   }  
-  required_version = ">= 1.11.0"
+  required_version = ">= 1.5.0"
 
   ##
   # UNCOMMENT THE BACKEND BLOCK TO USE S3 STATE

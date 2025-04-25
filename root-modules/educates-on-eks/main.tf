@@ -33,7 +33,7 @@ module "eks_for_educates" {
 ##
 # Configure the kubectl provider with all the details from the EKS cluster. We don't use
 # the kubeconfig file as on deletion, the file might no longer exist.
-## 
+##
 provider "kubectl" {
   host                   = module.eks_for_educates.kubernetes.host
   cluster_ca_certificate = module.eks_for_educates.kubernetes.cluster_ca_certificate
@@ -64,9 +64,9 @@ module "token-sa-kubeconfig" {
 
   cluster = {
     name                   = var.cluster_name
-    host                   = module.gke_for_educates.kubernetes.host
-    cluster_ca_certificate = module.gke_for_educates.kubernetes.cluster_ca_certificate
-    token                  = module.gke_for_educates.kubernetes.token
+    host                   = module.eks_for_educates.kubernetes.host
+    cluster_ca_certificate = module.eks_for_educates.kubernetes.cluster_ca_certificate
+    token                  = module.eks_for_educates.kubernetes.token
   }
   kubeconfig_file = "${path.root}/kubeconfig-${var.cluster_name}-token.yaml"
 }
