@@ -1,5 +1,6 @@
 output "eks" {
   value = module.eks_for_educates
+  sensitive = true
 }
 
 output "kubernetes" {

@@ -35,9 +35,7 @@ resource "time_sleep" "wait_for_cluster_deletion" {
 
 locals {
   # We can use to configure the defaults when no value is specified
-  node_groups = {
-    for k, v in var.node_groups : k => merge(v, { iam_role_permissions_boundary = "arn:aws:iam::${var.aws_account_id}:policy/PowerUserPermissionsBoundaryPolicy" })
-  }
+  node_groups = var.node_groups
 
   tags = merge({
     created_by = "edukates-eks-terraform"
@@ -50,7 +48,6 @@ module "eks" {
 
   cluster_name                  = var.cluster_name
   cluster_version               = var.kubernetes_version
-  iam_role_permissions_boundary = "arn:aws:iam::${var.aws_account_id}:policy/PowerUserPermissionsBoundaryPolicy"
 
   cluster_addons = {
     coredns = {
@@ -68,9 +65,9 @@ module "eks" {
   subnet_ids                     = module.vpc.private_subnets
   cluster_endpoint_public_access = true
 
-  eks_managed_node_group_defaults = {
-    ami_type = "AL2_x86_64"
-  }
+#  eks_managed_node_group_defaults = {
+#    ami_type = "AL2_x86_64"
+#  }
 
   eks_managed_node_groups = local.node_groups
 
@@ -122,7 +119,7 @@ resource "aws_iam_policy" "additional" {
 
 }
 
-# https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/ 
+# https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/
 data "aws_iam_policy" "ebs_csi_policy" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
@@ -136,7 +133,6 @@ module "irsa-ebs-csi" {
   provider_url                  = module.eks.oidc_provider
   role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
-  role_permissions_boundary_arn = "arn:aws:iam::${var.aws_account_id}:policy/PowerUserPermissionsBoundaryPolicy"
 
   depends_on = [
     module.eks
@@ -174,8 +170,6 @@ module "certmanager_irsa_role" {
     }
   }
 
-  role_permissions_boundary_arn = "arn:aws:iam::${var.aws_account_id}:policy/PowerUserPermissionsBoundaryPolicy"
-
   tags = local.tags
 
   depends_on = [
@@ -196,8 +190,6 @@ module "externaldns_irsa_role" {
       namespace_service_accounts = ["external-dns:external-dns"]
     }
   }
-
-  role_permissions_boundary_arn = "arn:aws:iam::${var.aws_account_id}:policy/PowerUserPermissionsBoundaryPolicy"
 
   tags = local.tags
 
