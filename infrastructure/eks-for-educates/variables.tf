@@ -15,7 +15,7 @@ variable "aws_region" {
 variable "kubernetes_version" {
   description = "Version of kubernetes cluster to create"
   type        = string
-  default     = "1.31"
+  default     = "1.32"
 }
 
 variable "cluster_name" {

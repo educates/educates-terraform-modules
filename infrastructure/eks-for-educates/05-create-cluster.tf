@@ -4,7 +4,6 @@ data "aws_iam_session_context" "current" {
   arn = data.aws_caller_identity.current.arn
 }
 
-
 provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
@@ -44,7 +43,7 @@ locals {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.17.2"
+  version = "20.36.0"
 
   cluster_name                  = var.cluster_name
   cluster_version               = var.kubernetes_version
@@ -92,13 +91,24 @@ module "eks" {
 
   #aws_cloudwatch_log_group.this[0]
 
-  # aws-auth configmap
+  authentication_mode = "API_AND_CONFIG_MAP"
+  enable_cluster_creator_admin_permissions = true
+
+  # kms
+  kms_key_administrators = concat(var.kms_key_administrators, [data.aws_iam_session_context.current.issuer_arn])
+}
+
+module "aws_auth" {
+  source = "terraform-aws-modules/eks/aws//modules/aws-auth"
+
+    # aws-auth configmap
   manage_aws_auth_configmap = var.manage_aws_auth_configmap
   aws_auth_users = var.aws_auth_users
   aws_auth_roles = var.aws_auth_roles
 
-  # kms
-  kms_key_administrators = concat(var.kms_key_administrators, [data.aws_iam_session_context.current.issuer_arn])
+  depends_on = [
+    module.eks
+  ]
 }
 
 resource "aws_iam_policy" "additional" {
@@ -142,7 +152,7 @@ module "irsa-ebs-csi" {
 resource "aws_eks_addon" "ebs-csi" {
   cluster_name = module.eks.cluster_name
   addon_name   = "aws-ebs-csi-driver"
-  # addon_version            = "v1.22.0-eksbuild.2"
+
   service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
   tags = {
     "eks_addon" = "ebs-csi"
@@ -154,7 +164,6 @@ resource "aws_eks_addon" "ebs-csi" {
     time_sleep.wait_for_cluster_deletion
   ]
 }
-
 
 module "certmanager_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
