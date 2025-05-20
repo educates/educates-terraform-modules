@@ -42,7 +42,7 @@ variable "node_groups" {
 variable "kubernetes_version" {
   description = "Version of kubernetes cluster to create"
   type        = string
-  default     = "1.31"
+  default     = "1.32"
 
   validation {
     condition     = contains(["1.30", "1.31", "1.32"], var.kubernetes_version)
