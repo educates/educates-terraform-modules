@@ -22,7 +22,7 @@ module "eks_for_educates" {
   cluster_name       = var.cluster_name
   kubernetes_version = var.kubernetes_version
   node_groups        = var.node_groups
-
+  ami_type           = var.ami_type
   manage_aws_auth_configmap = var.manage_aws_auth_configmap
   aws_auth_users            = var.aws_auth_users
   aws_auth_roles            = var.aws_auth_roles

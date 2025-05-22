@@ -23,6 +23,12 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "ami_type" {
+  description = "AMI type to use for the node groups"
+  type        = string
+  default     = "AL2023_x86_64_STANDARD"
+}
+
 variable "node_groups" {
   description = "Node groups for the cluster"
   type = map(object({
