@@ -1,11 +1,12 @@
 # Educates Terraform modules
 Terraform modules used for Educates cluster management
 
-This repository provides a set of reusable Terraform modules to create [Educates Infrastructure](./infrastructure/) such as an EKS or GKE cluster to be used for Educates, with all the typical pre-requisites satisfied, and there's modules to create the [Educates Platform](./platform/) on a cluster. 
+This repository provides a set of reusable Terraform modules to create [Educates Infrastructure](./infrastructure/) such as an EKS or GKE cluster to be used for Educates, with all the typical pre-requisites satisfied, and there's modules to create the [Educates Platform](./platform/) on a cluster.
 
 There's also some [root-modules](./root-modules/) that serve as example showing how to get a full [Educates](educates.dev) full installation. These are not versioned.
 
 - [gke](./root-modules/educates-on-gke/)
+- [eks](./root-modules/educates-on-eks/)
 
 ## Release a module
 
@@ -21,7 +22,7 @@ To release:
 __NOTE__: Initial release will not need to adhere to this rule
 
 Examples:
-- test: debugging outputs with changed module 
+- test: debugging outputs with changed module
 - fix: improve example variable
 - feat: add another demo module
 
@@ -30,8 +31,8 @@ Examples:
 - [x] Make this into educates-terraform-modules GitHub repository
 - [x] Adopt best practices for module naming as suggested in https://github.com/techpivot/terraform-module-releaser
 - [x] Make the modules releasable via https://github.com/techpivot/terraform-module-releaser
-- [ ] Validate eks-for-educates module
-- [ ] EKS root module
+- [x] Validate eks-for-educates module
+- [x] EKS root module
 - [ ] Adopt terraform-docs for modules https://terraform-docs.io/
 - [x] token-sa-kubeconfig module (working with EKS and GKE)
 - [ ] educates-gitops module

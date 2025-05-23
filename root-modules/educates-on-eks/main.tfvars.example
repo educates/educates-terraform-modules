@@ -1,0 +1,61 @@
+aws_region   = "eu-west-1"
+cluster_name = "educates-cluster"
+
+manage_aws_auth_configmap = true
+aws_auth_users = [
+  {
+    groups   = ["system:masters"]
+    userarn  = "arn:aws:iam::1234567890:user/jorge.morales"
+    username = "admin"
+  },
+  {
+    groups   = ["system:masters"]
+    userarn  = "arn:aws:iam::1234567890:user/graham.dumpleton"
+    username = "admin"
+  }
+]
+
+aws_auth_roles = [
+  {
+    groups   = ["system:masters"]
+    rolearn  = "arn:aws:iam::1234567890:role/TerraformPlanApply"
+    username = "admin"
+  },
+  {
+    groups   = ["system:masters"]
+    rolearn  = "arn:aws:iam::1234567890:role/AWSReservedSSO_AdministratorAccess"
+    username = "admin"
+  }
+]
+
+kms_key_administrators = ["arn:aws:iam::1234567890:role/TerraformPlanApply"]
+
+node_groups = {
+  "one" : {
+    "name" : "node-group-1",
+    "desired_size" : 2
+    "max_size" : 3,
+    "min_size" : 1,
+    "instance_types" : ["m6i.2xlarge"]
+    "disk_size" : 100
+    "use_custom_launch_template" : false
+  },
+  "two" : {
+    "name" : "node-group-2",
+    "desired_size" : 2
+    "max_size" : 3,
+    "min_size" : 1,
+    "instance_types" : ["m6i.2xlarge"]
+    "disk_size" : 100
+    "use_custom_launch_template" : false
+  },
+  "three" : {
+    "name" : "node-group-3",
+    "desired_size" : 2
+    "max_size" : 3,
+    "min_size" : 1,
+    "instance_types" : ["m6i.2xlarge"]
+    "disk_size" : 100
+    "use_custom_launch_template" : false
+  }
+}
