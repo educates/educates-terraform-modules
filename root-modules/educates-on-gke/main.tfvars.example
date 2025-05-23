@@ -1,7 +1,7 @@
 ### Infrastructure configuration
 project_id = "my-project"
 region     = "europe-west1"
-kubernetes_version = "1.31"
+kubernetes_version = "1.32"
 cluster_name = "educates-cluster"
 node_groups = [
   {

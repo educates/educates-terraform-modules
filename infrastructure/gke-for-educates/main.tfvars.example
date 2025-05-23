@@ -3,7 +3,7 @@ project_id = "my_project"
 region = "europe-west1"
 cluster_name = "example_cluster"
 # OPTIONAL
-kubernetes_version = "1.31"
+kubernetes_version = "1.32"
 node_groups = [
   {
     name               = "default-node-pool"
