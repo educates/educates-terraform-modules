@@ -57,7 +57,7 @@ terraform destroy -var-file environment.tfvars -auto-approve
 | <a name="input_aws_auth_users"></a> [aws\_auth\_users](#input\_aws\_auth\_users) | n/a | <pre>list(object({<br/>    groups   = list(string)<br/>    userarn  = string<br/>    username = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region | `string` | n/a | yes |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Cluster name to use | `string` | n/a | yes |
-| <a name="input_educates_version"></a> [educates\_version](#input\_educates\_version) | Educates version to use | `string` | `"3.2.2"` | no |
+| <a name="input_educates_version"></a> [educates\_version](#input\_educates\_version) | Educates version to use | `string` | `"3.3.2"` | no |
 | <a name="input_kms_key_administrators"></a> [kms\_key\_administrators](#input\_kms\_key\_administrators) | n/a | `list(string)` | `[]` | no |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Version of kubernetes cluster to create | `string` | `"1.31"` | no |
 | <a name="input_manage_aws_auth_configmap"></a> [manage\_aws\_auth\_configmap](#input\_manage\_aws\_auth\_configmap) | n/a | `bool` | n/a | yes |

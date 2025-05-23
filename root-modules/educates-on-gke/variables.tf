@@ -59,10 +59,16 @@ variable "kubeconfig_file" {
 ##
 # Configuration for the Educates Installer
 ##
+variable "deploy_educates" {
+  description = "Whether to deploy/install Educates platform onto the cluster"
+  type        = bool
+  default     = true
+}
+
 variable "educates_version" {
   description = "Educates version to use"
   type = string
-  default = "3.2.2"
+  default = "3.3.2"
 }
 
 variable "TLD" {

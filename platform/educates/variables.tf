@@ -15,7 +15,7 @@ variable "educates_app" {
 variable "educates_config" {
   type = object({
     installer_oci_image    = optional(string, "ghcr.io/educates/educates-installer")
-    version                = optional(string, "3.2.2")
+    version                = optional(string, "3.3.2")
     config_file            = optional(string, "educates-app-config.yaml")
     config_is_to_be_merged = optional(bool, true)
     install                = optional(bool, true)

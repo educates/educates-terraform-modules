@@ -18,7 +18,7 @@ module "gke_for_educates" {
 ##
 # Configure the kubectl provider with all the details from the GKE cluster. We don't use
 # the kubeconfig file as on deletion, the file might no longer exist.
-## 
+##
 provider "kubectl" {
   host                   = module.gke_for_educates.kubernetes.host
   cluster_ca_certificate = module.gke_for_educates.kubernetes.cluster_ca_certificate
@@ -28,6 +28,8 @@ provider "kubectl" {
 }
 
 module "educates" {
+  count = var.deploy_educates ? 1 : 0
+
   source = "../../platform/educates"
   # source           = "github.com/educates/educates-terraform-modules.git//platform/educates?ref=develop"
   wildcard_domain = "${var.cluster_name}.${var.TLD}"
