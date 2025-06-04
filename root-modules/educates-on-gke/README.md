@@ -6,7 +6,7 @@ This module will create a GKE cluster and then provision Educates 3.x on top
 
 Create a file named `main.tfvars` and place all the required configuration there
 
-There's an example configuration file at [main.tfvars.example](main.tfvars.example)
+There's an example configuration file at [examples/main.tfvars.example](examples/main.tfvars.example)
 
 ## How to run
 
