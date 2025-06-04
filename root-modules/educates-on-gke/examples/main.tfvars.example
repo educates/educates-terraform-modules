@@ -1,0 +1,23 @@
+project_id = "{{gcp_project_id}}"
+region     = "{{gcp_region}}"
+kubernetes_version = "1.32"
+cluster_name = "{{cluster_name}}"
+deploy_educates = true
+educates_version = "3.3.2"
+TLD = "{{educates_ingress_domain}}"
+
+node_groups = [
+  {
+    name               = "node-pool-workshops"
+    machine_type       = "e2-medium"
+    min_count          = 2 # note that when the min/max/initial_node_count differently, auto-scaling is enabled
+    max_count          = 2
+    initial_node_count = 2
+    disk_size_gb       = 100
+    disk_type          = "pd-balanced" # "pd-standard", "pd-balanced", "pd-ssd"
+    image_type         = "COS_CONTAINERD"
+    auto_repair        = true
+    auto_upgrade       = true
+    preemptible        = false
+  }
+]

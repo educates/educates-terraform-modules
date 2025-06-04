@@ -10,7 +10,7 @@ output "kubernetes" {
 }
 
 output "educates" {
-  value = module.educates.educates
+  value = var.deploy_educates ? module.educates[0].educates : null
 }
 
 output "token-sa-kubeconfig" {

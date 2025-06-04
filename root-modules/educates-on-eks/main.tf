@@ -43,6 +43,8 @@ provider "kubectl" {
 }
 
 module "educates" {
+  count = var.deploy_educates ? 1 : 0
+
   source = "../../platform/educates"
 # source           = "github.com/educates/educates-terraform-modules.git//platform/educates?ref=develop"
   wildcard_domain = "${var.cluster_name}.${var.TLD}"
