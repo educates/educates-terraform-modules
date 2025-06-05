@@ -10,9 +10,9 @@ node_groups = [
   {
     name               = "node-pool-workshops"
     machine_type       = "e2-medium"
-    min_count          = 2 # note that when the min/max/initial_node_count differently, auto-scaling is enabled
-    max_count          = 2
-    initial_node_count = 2
+    min_count          = 3 # note that when the min/max/initial_node_count differently, auto-scaling is enabled
+    max_count          = 3
+    initial_node_count = 3
     disk_size_gb       = 100
     disk_type          = "pd-balanced" # "pd-standard", "pd-balanced", "pd-ssd"
     image_type         = "COS_CONTAINERD"
