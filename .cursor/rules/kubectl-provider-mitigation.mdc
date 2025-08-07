@@ -1,0 +1,88 @@
+# kubectl Provider Mitigation Strategies
+
+## Critical Provider Dependency
+
+The `alekc/kubectl` provider is **essential** for the educates platform module and cannot be migrated to `hashicorp/kubernetes` due to:
+
+### Required kubectl Features
+1. **Advanced Wait Conditions**: Field-based waiting with complex conditions
+2. **Multi-document YAML**: Processing complex YAML manifests with multiple resources
+3. **Custom Resource Deployment**: Deploying CRDs and custom resources
+4. **Advanced Field Validation**: Waiting for specific field values and conditions
+
+### Provider Version Pinning
+```hcl
+# platform/educates/versions.tf
+terraform {
+  required_providers {
+    kubectl = {
+      source  = "alekc/kubectl"
+      version = "~> 2.1.3"  # Pinned for stability
+    }
+  }
+}
+```
+
+## Documentation Requirements
+
+### Module README Updates
+- Document the critical dependency on kubectl provider
+- Explain why migration to hashicorp/kubernetes is not feasible
+- Include provider version constraints in documentation
+
+### Provider Version Tables
+Update README provider tables to reflect pinned versions:
+```markdown
+| Name | Version |
+|------|---------|
+| [alekc/kubectl](https://registry.terraform.io/providers/alekc/kubectl) | ~> 2.1.3 |
+```
+
+## Monitoring and Maintenance
+
+### Automated Monitoring
+- Use scripts to monitor kubectl provider updates
+- Set up GitHub Actions for weekly provider checks
+- Test compatibility with new provider versions
+
+### Migration Preparation
+- Keep commented examples of remote module usage
+- Document version constraints for future remote deployment
+- Prepare for potential registry publication
+
+## Critical Resources Using kubectl
+
+### kapp-controller Deployment
+```hcl
+resource "kubectl_manifest" "kapp_controller" {
+  yaml_body = file("${path.module}/kapp-controller/release.yml")
+  
+  wait_for {
+    field = "status.conditions.[0].type"
+    value = "Ready"
+  }
+}
+```
+
+### Educates Application Deployment
+```hcl
+resource "kubectl_manifest" "educates_app" {
+  yaml_body = yamlencode({
+    apiVersion = "kappctrl.k14s.io/v1alpha1"
+    kind       = "App"
+    # Complex YAML structure with multiple resources
+  })
+}
+```
+
+## Mitigation Best Practices
+
+1. **Version Pinning**: Always pin kubectl provider version
+2. **Documentation**: Clearly explain the critical dependency
+3. **Monitoring**: Set up automated provider update monitoring
+4. **Testing**: Include provider compatibility tests
+5. **Backup Plans**: Prepare for potential provider issues
+description:
+globs:
+alwaysApply: false
+---

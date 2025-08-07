@@ -730,6 +730,10 @@ spec:
                                   items:
                                     type: string
                                   type: array
+                                platform:
+                                  description: Resolve to specific platform for image
+                                    indexes (optional)
+                                  type: string
                               type: object
                             kustomize:
                               description: TODO implement kustomize
@@ -955,6 +959,10 @@ spec:
       jsonPath: .metadata.creationTimestamp
       name: Age
       type: date
+    - description: Paused
+      jsonPath: .spec.paused
+      name: Paused
+      type: boolean
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -1470,6 +1478,10 @@ spec:
                           items:
                             type: string
                           type: array
+                        platform:
+                          description: Resolve to specific platform for image indexes
+                            (optional)
+                          type: string
                       type: object
                     kustomize:
                       description: TODO implement kustomize
@@ -1813,6 +1825,10 @@ spec:
       jsonPath: .metadata.creationTimestamp
       name: Age
       type: date
+    - description: Paused
+      jsonPath: .spec.paused
+      name: Paused
+      type: boolean
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -1993,6 +2009,10 @@ spec:
       jsonPath: .status.friendlyDescription
       name: Description
       type: string
+    - description: Paused
+      jsonPath: .spec.paused
+      name: Paused
+      type: boolean
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -2344,7 +2364,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kapp-controller.carvel.dev/version: v0.55.1
+    kapp-controller.carvel.dev/version: v0.58.0
     kbld.k14s.io/images: |
       - origins:
         - local:
@@ -2352,10 +2372,10 @@ metadata:
         - git:
             dirty: true
             remoteURL: https://github.com/carvel-dev/kapp-controller
-            sha: dd15f4ff05bc0d3a17ab739b3b86d84a1ae5d024
+            sha: b221a850ba1c0eca77d3ca8fcb9917df19275b90
             tags:
-            - v0.55.1
-        url: ghcr.io/carvel-dev/kapp-controller@sha256:cf250cb1d03ba0f391fa35a9424ace7327a07bd69b41c94d62e69c58d143566e
+            - v0.58.0
+        url: ghcr.io/carvel-dev/kapp-controller@sha256:52ecad550cd3e98b6a27ca85e851c5b0884b04d99003ea201a289f75e33d9232
   name: kapp-controller
   namespace: kapp-controller
 spec:
@@ -2385,7 +2405,7 @@ spec:
               fieldPath: metadata.namespace
         - name: KAPPCTRL_API_PORT
           value: "8443"
-        image: ghcr.io/carvel-dev/kapp-controller@sha256:cf250cb1d03ba0f391fa35a9424ace7327a07bd69b41c94d62e69c58d143566e
+        image: ghcr.io/carvel-dev/kapp-controller@sha256:52ecad550cd3e98b6a27ca85e851c5b0884b04d99003ea201a289f75e33d9232
         name: kapp-controller
         ports:
         - containerPort: 8443
@@ -2419,7 +2439,7 @@ spec:
           value: /etc/kappctrl-mem-tmp/sidecarexec.sock
         - name: IMGPKG_ACTIVE_KEYCHAINS
           value: gke,aks,ecr
-        image: ghcr.io/carvel-dev/kapp-controller@sha256:cf250cb1d03ba0f391fa35a9424ace7327a07bd69b41c94d62e69c58d143566e
+        image: ghcr.io/carvel-dev/kapp-controller@sha256:52ecad550cd3e98b6a27ca85e851c5b0884b04d99003ea201a289f75e33d9232
         name: kapp-controller-sidecarexec
         resources:
           requests:

@@ -1,0 +1,64 @@
+---
+description: Documentation and README Maintenance Patterns
+globs: **/README.md
+---
+
+# Documentation and README Maintenance Patterns
+
+## Module README Structure
+Each module should have a comprehensive README with these sections:
+
+### Required Sections
+1. **Module Description**: What the module does and its purpose
+2. **Configuration**: How to configure and use the module
+3. **Requirements**: Terraform and provider version requirements
+4. **Providers**: Provider versions used
+5. **Modules**: External modules and their versions
+6. **Resources**: Resources created by the module
+7. **Inputs**: All variables with types, defaults, and descriptions
+8. **Outputs**: All outputs with descriptions
+
+### Variable Documentation Format
+Use terraform-docs compatible format:
+```markdown
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_gcp_config"></a> [gcp\_config](#input\_gcp\_config) | GCP Configuration | <pre>object({<br/>  cluster_name = string<br/>  project = string<br/>})</pre> | `{}` | no |
+```
+
+## Documentation Updates When Changing Variables
+
+### Adding New Variables
+When adding new variables to a module:
+1. Update the variable definition in `variables.tf`
+2. Update the README input table with the new variable
+3. Add documentation explaining the new variable's purpose
+4. Include examples of usage if complex
+
+### Changing Variable Structure
+When modifying existing variables (like adding optional fields):
+1. Update the type definition in the README
+2. Update the default values shown
+3. Add explanatory text about new optional fields
+4. Document backward compatibility behavior
+
+### Example: Adding Service Account Variables
+```markdown
+### GCP Configuration
+
+When using `infrastructure_provider = "gcp"`, the module can automatically configure workload identity:
+
+- `certmanager_service_account`: Optional. Full email of the Google Service Account for cert-manager
+- `externaldns_service_account`: Optional. Full email of the Google Service Account for external-dns
+
+These variables allow integration with the GKE infrastructure module for consistent service account naming.
+```
+
+## README Maintenance Checklist
+- [ ] All new variables documented in inputs table
+- [ ] Variable types match actual definitions
+- [ ] Default values are accurate
+- [ ] Optional fields clearly marked
+- [ ] Integration patterns explained
+- [ ] Backward compatibility documented
+- [ ] Examples provided for complex configurations

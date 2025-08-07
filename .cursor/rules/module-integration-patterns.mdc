@@ -1,0 +1,188 @@
+# Module Integration Patterns
+
+## Data Flow Between Modules
+
+### Explicit Output Passing
+Always pass computed values from child modules to parent modules, then to other child modules as explicit inputs:
+
+```hcl
+# Root module - collect outputs from infrastructure module
+module "gke_for_educates" {
+  source = "../../infrastructure/gke-for-educates"
+  # ... configuration
+}
+
+# Root module - pass outputs to platform module
+module "educates" {
+  source = "../../platform/educates"
+  gcp_config = {
+    cluster_name                = var.cluster_name
+    project                     = var.project_id
+    certmanager_service_account = module.gke_for_educates.gke.certmanager_service_account
+    externaldns_service_account = module.gke_for_educates.gke.externaldns_service_account
+  }
+}
+```
+
+### Avoid Value Reconstruction
+Don't reconstruct values in downstream modules that are already computed by upstream modules:
+
+```hcl
+# ❌ Bad - reconstructing service account emails
+module "educates" {
+  gcp_config = {
+    cluster_name = var.cluster_name
+    project      = var.project_id
+    # Missing explicit service account emails
+  }
+}
+
+# ✅ Good - using explicit outputs
+module "educates" {
+  gcp_config = {
+    cluster_name                = var.cluster_name
+    project                     = var.project_id
+    certmanager_service_account = module.gke_for_educates.gke.certmanager_service_account
+    externaldns_service_account = module.gke_for_educates.gke.externaldns_service_account
+  }
+}
+```
+
+## Backward Compatibility
+
+### Optional Input Fields
+When introducing new explicit inputs, provide fallbacks to old construction logic:
+
+```hcl
+# platform/educates/variables.tf
+variable "gcp_config" {
+  type = object({
+    cluster_name                = string
+    project                     = string
+    dns_zone                    = string
+    certmanager_service_account = optional(string, "")
+    externaldns_service_account = optional(string, "")
+  })
+}
+```
+
+### Fallback Logic in Resources
+```hcl
+# platform/educates/20-educates-app.tf
+workloadIdentity = {
+  external-dns = var.gcp_config.externaldns_service_account != "" ? 
+    var.gcp_config.externaldns_service_account : 
+    "${var.gcp_config.cluster_name}-ext-dns@${var.gcp_config.project}.iam.gserviceaccount.com"
+  cert-manager = var.gcp_config.certmanager_service_account != "" ? 
+    var.gcp_config.certmanager_service_account : 
+    "${var.gcp_config.cluster_name}-cert-mgr@${var.gcp_config.project}.iam.gserviceaccount.com"
+}
+```
+
+## Avoiding Tight Coupling
+
+### Don't Hardcode Naming Assumptions
+Modules should not assume specific naming conventions from other modules:
+
+```hcl
+# ❌ Bad - hardcoded naming assumption
+resource "kubernetes_secret" "config" {
+  metadata {
+    name = "${var.cluster_name}-config"
+  }
+}
+
+# ✅ Good - explicit naming from parent
+resource "kubernetes_secret" "config" {
+  metadata {
+    name = var.config_secret_name
+  }
+}
+```
+
+### Use Explicit Inputs
+```hcl
+# Root module - provide explicit names
+module "educates" {
+  config_secret_name = "${var.cluster_name}-educates-config"
+  service_accounts = {
+    cert_manager = module.gke_for_educates.gke.certmanager_service_account
+    external_dns = module.gke_for_educates.gke.externaldns_service_account
+  }
+}
+```
+
+## Module Versioning Strategy
+
+### Local Module Comments
+For local modules, include commented examples for future remote usage:
+
+```hcl
+module "gke_for_educates" {
+  source = "../../infrastructure/gke-for-educates"
+  # source = "github.com/educates/educates-terraform-modules.git//infrastructure/gke-for-educates"
+  # version = "~> 1.0"
+  
+  cluster_name = var.cluster_name
+  project_id   = var.project_id
+  region       = var.region
+}
+```
+
+### Provider Version Constraints
+Always include version constraints for providers:
+
+```hcl
+# versions.tf
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 6.0"
+    }
+    kubectl = {
+      source  = "alekc/kubectl"
+      version = "~> 2.1"
+    }
+  }
+  required_version = ">= 1.5.0"
+}
+```
+
+## Testing Integration
+
+### Test Module Interactions
+```go
+func TestModuleIntegration(t *testing.T) {
+    config := loadTestConfig(t)
+    
+    terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
+        TerraformDir: "../../root-modules/educates-on-gke",
+        Vars: map[string]interface{}{
+            "cluster_name": "test-cluster",
+            "project_id":   config.GCP.ProjectID,
+            "region":       config.GCP.Region,
+        },
+    })
+    
+    defer terraform.Destroy(t, terraformOptions)
+    terraform.InitAndApply(t, terraformOptions)
+    
+    // Validate cross-module outputs
+    gkeOutput := terraform.Output(t, terraformOptions, "gke")
+    // Parse and validate service account emails
+}
+```
+
+## Best Practices
+
+1. **Explicit Data Flow**: Always pass computed values explicitly
+2. **Backward Compatibility**: Use optional fields with fallbacks
+3. **Avoid Reconstruction**: Don't rebuild values already computed
+4. **Version Constraints**: Pin provider versions for stability
+5. **Test Integration**: Validate module interactions in tests
+6. **Document Dependencies**: Clearly document module dependencies
+description:
+globs:
+alwaysApply: false
+---

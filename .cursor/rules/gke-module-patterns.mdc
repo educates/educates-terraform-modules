@@ -1,0 +1,61 @@
+---
+description: GKE Module Patterns and Service Account Handling
+globs: infrastructure/gke-for-educates/*.tf,platform/educates/*.tf
+---
+
+# GKE Module Patterns and Service Account Handling
+
+## Service Account Naming Strategy
+
+When creating Google Service Accounts in the GKE module, always use safe naming patterns:
+
+```hcl
+locals {
+  # Ensure service account IDs are valid (6-30 chars, lowercase, alphanumeric + hyphens)
+  cluster_name_safe = lower(replace(var.cluster_name, "_", "-"))
+  base_account_id = substr(local.cluster_name_safe, 0, 30)
+  cert_manager_account_id = substr("${local.cluster_name_safe}-cert-mgr", 0, 30)
+  external_dns_account_id = substr("${local.cluster_name_safe}-ext-dns", 0, 30)
+}
+```
+
+## Service Account Integration Pattern
+
+### Infrastructure Module (GKE)
+- Create service accounts with safe, truncated names
+- Export actual service account emails in outputs:
+  ```hcl
+  output "gke" {
+    value = {
+      certmanager_service_account = google_service_account.cert-manager-gsa.email
+      externaldns_service_account = google_service_account.external-dns-gsa.email
+    }
+  }
+  ```
+
+### Root Module Integration
+- Pass actual service account emails from infrastructure to platform:
+  ```hcl
+  gcp_config = {
+    cluster_name = var.cluster_name
+    project      = var.project_id
+    dns_zone     = var.TLD
+    certmanager_service_account = module.gke_for_educates.gke.certmanager_service_account
+    externaldns_service_account = module.gke_for_educates.gke.externaldns_service_account
+  }
+  ```
+
+### Platform Module Pattern
+- Accept optional service account emails with fallback:
+  ```hcl
+  workloadIdentity = {
+    external-dns = var.gcp_config.externaldns_service_account != "" ? var.gcp_config.externaldns_service_account : "${var.gcp_config.cluster_name}-ext-dns@${var.gcp_config.project}.iam.gserviceaccount.com"
+    cert-manager = var.gcp_config.certmanager_service_account != "" ? var.gcp_config.certmanager_service_account : "${var.gcp_config.cluster_name}-cert-mgr@${var.gcp_config.project}.iam.gserviceaccount.com"
+  }
+  ```
+
+## Key Principles
+1. **Decouple naming logic**: Infrastructure module handles truncation, platform module uses actual emails
+2. **Maintain backward compatibility**: Platform module falls back to constructed names if not provided
+3. **Use shortened suffixes**: `-cert-mgr` and `-ext-dns` instead of full names to maximize cluster name space
+4. **Always validate constraints**: Google Cloud service account names must be 6-30 characters

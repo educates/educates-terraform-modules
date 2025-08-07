@@ -1,0 +1,8 @@
+---
+description: Guidelines for cursor generated files
+globs:
+alwaysApply: true
+---
+
+- ALWAYS store cursor rules in [.cursor/rules](mdc:.cursor/rules) directory
+- ALWAYS store generated cursor documentation files in [.cursor/docs](mdc:.cursor/docs) directory

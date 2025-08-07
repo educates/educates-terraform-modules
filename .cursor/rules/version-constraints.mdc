@@ -1,0 +1,86 @@
+---
+description: Terraform Version Constraints and Legacy Module Prevention
+globs: **/versions.tf,**/main.tf
+---
+
+# Terraform Version Constraints and Legacy Module Prevention
+
+## Provider Version Constraints
+Always specify version constraints for all providers to prevent legacy module warnings:
+
+### Required Providers Block
+```hcl
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 6.28"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.31"
+    }
+    kubectl = {
+      source  = "alekc/kubectl"
+      version = "~> 2.1"
+    }
+  }
+  required_version = ">= 1.5.0"
+}
+```
+
+## Module Version Constraints
+
+### Local Modules (Current Usage)
+Local modules with relative paths do NOT support version constraints:
+```hcl
+# ✅ Correct for local modules
+module "gke_for_educates" {
+  source = "../../infrastructure/gke-for-educates"
+  # version constraints not supported for local paths
+}
+```
+
+### Remote Modules (Future Usage)
+Prepare for remote module usage with commented version constraints:
+```hcl
+module "gke_for_educates" {
+  source = "../../infrastructure/gke-for-educates"
+  # For future remote usage:
+  # source = "github.com/educates/educates-terraform-modules.git//infrastructure/gke-for-educates"
+  # version = "~> 1.0"
+}
+```
+
+## Version Constraint Patterns
+
+### Provider Versions by Module Type
+- **Infrastructure modules**: Use specific versions for stability
+  - Google Provider: `~> 6.28`
+  - AWS Provider: `~> 5.0`
+  - Kubernetes Provider: `~> 2.31`
+
+- **Platform modules**: Use compatible ranges
+  - kubectl Provider: `~> 2.1`
+
+- **Root modules**: Inherit from child modules, add missing providers
+  - kubectl Provider: `~> 2.1` (for platform integration)
+
+### Common Version Constraints
+```hcl
+# Current project standards
+google     = "~> 6.28"  # GKE modules
+aws        = "~> 5.0"   # EKS modules  
+kubernetes = "~> 2.31"  # All k8s resources
+kubectl    = "~> 2.1"   # Platform deployments
+local      = "~> 2.5"   # File operations
+time       = "~> 0.11"  # Delays and timeouts
+tls        = "~> 4.0"   # Certificate operations
+```
+
+## Legacy Module Prevention Checklist
+- [ ] All providers have version constraints
+- [ ] No commented-out version constraints
+- [ ] Terraform version >= 1.5.0
+- [ ] Module sources prepared for future versioning
+- [ ] External modules use proper version constraints

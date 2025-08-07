@@ -1,0 +1,36 @@
+---
+description: Terraform Patterns and Conventions
+globs: *.tf,*.tfvars,*.tfvars.example
+alwaysApply: true
+---
+
+# Terraform Patterns and Conventions
+
+## File Naming Conventions
+- Use descriptive names for tfvars files (e.g., `production-cluster.tfvars`, `mistral-7b.tfvars`)
+- Example files should be named with `.example` suffix (e.g., `cluster.tfvars.example`)
+
+## Variable Structure
+- All variables should be defined in `variables.tf` files
+- Use consistent variable naming across both GKE and vLLM configurations
+- Include descriptions for all variables to improve maintainability
+
+## Provider Configuration
+- Terraform version should be >= 1.5.0
+- Always include version constraints for providers to avoid legacy module warnings
+- Use `~>` constraints for compatibility (e.g., `version = "~> 2.31"`)
+
+## Module Versioning and Sources
+- Local modules (relative paths like `../../infrastructure/gke-for-educates`) do NOT support version constraints
+- Version constraints only work with remote modules from registries or Git repositories
+- For future remote usage, prepare commented examples with version constraints:
+  ```hcl
+  # source = "github.com/educates/educates-terraform-modules.git//infrastructure/gke-for-educates"
+  # version = "~> 1.0"
+  ```
+- Use `~> 1.0` as initial version constraint for new modules
+
+## Resource Naming Constraints
+- Google Cloud service account `account_id` must be 6-30 characters, lowercase, alphanumeric + hyphens
+- Use truncation functions for long cluster names: `substr(local.cluster_name_safe, 0, 30)`
+- Convert underscores to hyphens: `lower(replace(var.cluster_name, "_", "-"))` 

@@ -1,0 +1,76 @@
+# Terraform Testing Patterns
+
+## Test Configuration Externalization
+
+### YAML Configuration Files
+- Store test configuration in YAML files for easy modification without code changes
+- Use `test-config.yaml` for externalizing environment-specific settings
+- Keep test cases in code, externalize only environment parameters
+
+### Configuration Structure
+```yaml
+# tests/unit/test-config.yaml
+gcp:
+  project_id: "test-project-id"
+  region: "us-central1"
+```
+
+### Go Test Configuration Loading
+```go
+type TestConfig struct {
+    GCP struct {
+        ProjectID string `yaml:"project_id"`
+        Region    string `yaml:"region"`
+    } `yaml:"gcp"`
+}
+
+func loadTestConfig(t *testing.T) *TestConfig {
+    configPath := "test-config.yaml"
+    // Load and parse YAML configuration
+}
+```
+
+## Test File Naming Conventions
+- Use `_test.go` suffix for Go test files (not `-test.go`)
+- Test files must be recognized by Go's testing framework
+- Example: `gke_service_account_test.go` (not `gke-service-account-test.go`)
+
+## Terratest Integration
+- Use `github.com/gruntwork-io/terratest/modules/terraform` for infrastructure testing
+- Always use `terraform.WithDefaultRetryableErrors()` for robust error handling
+- Include proper cleanup with `defer terraform.Destroy()`
+
+## Test Structure Patterns
+```go
+func TestModuleName(t *testing.T) {
+    config := loadTestConfig(t)
+    
+    terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
+        TerraformDir: "../../path/to/module",
+        Vars: map[string]interface{}{
+            "variable_name": "value",
+            "project_id":    config.GCP.ProjectID,
+            "region":        config.GCP.Region,
+        },
+    })
+    
+    defer terraform.Destroy(t, terraformOptions)
+    terraform.InitAndPlan(t, terraformOptions)
+    
+    // Test assertions
+}
+```
+
+## Output Validation
+- Parse Terraform outputs as JSON for structured validation
+- Use `json.Unmarshal()` to convert output strings to maps
+- Validate service account naming constraints and formats
+
+## Provider Compatibility Testing
+- Test provider version constraints and compatibility
+- Validate that modules work with pinned provider versions
+- Monitor provider updates for breaking changes
+description:
+globs:
+alwaysApply: false
+---

@@ -1,0 +1,75 @@
+---
+description: Module Integration and Data Flow Patterns
+globs: root-modules/**/*.tf,platform/**/*.tf,infrastructure/**/*.tf
+---
+
+# Module Integration and Data Flow Patterns
+
+## Module Architecture
+This project follows a layered architecture:
+- **Infrastructure modules** ([infrastructure/](mdc:infrastructure/)): Create cloud resources (EKS, GKE, service accounts)
+- **Platform modules** ([platform/](mdc:platform/)): Deploy applications (Educates)
+- **Root modules** ([root-modules/](mdc:root-modules/)): Orchestrate infrastructure + platform
+
+## Data Flow Pattern
+```
+Infrastructure Module → Outputs → Root Module → Platform Module
+```
+
+### Example: Service Account Email Flow
+1. **Infrastructure** creates service accounts with safe names
+2. **Infrastructure** exports actual emails via outputs
+3. **Root module** passes emails to platform module
+4. **Platform** uses actual emails instead of constructing them
+
+## Variable Passing Best Practices
+
+### Infrastructure Module Outputs
+Always export computed values that other modules need:
+```hcl
+output "gke" {
+  value = {
+    service_account             = google_service_account.default.email
+    certmanager_service_account = google_service_account.cert-manager-gsa.email
+    externaldns_service_account = google_service_account.external-dns-gsa.email
+  }
+}
+```
+
+### Root Module Integration
+Pass infrastructure outputs to platform modules:
+```hcl
+module "platform" {
+  source = "../../platform/educates"
+  
+  gcp_config = {
+    # Static configuration
+    cluster_name = var.cluster_name
+    project      = var.project_id
+    dns_zone     = var.TLD
+    # Dynamic values from infrastructure
+    certmanager_service_account = module.infrastructure.gke.certmanager_service_account
+    externaldns_service_account = module.infrastructure.gke.externaldns_service_account
+  }
+}
+```
+
+### Platform Module Variables
+Use optional variables with fallbacks for backward compatibility:
+```hcl
+variable "gcp_config" {
+  type = object({
+    cluster_name                = string
+    project                     = string
+    dns_zone                    = string
+    certmanager_service_account = optional(string, "")
+    externaldns_service_account = optional(string, "")
+  })
+}
+```
+
+## Anti-Patterns to Avoid
+- ❌ Hardcoding resource names in multiple modules
+- ❌ Constructing the same identifiers in different modules
+- ❌ Tight coupling between modules through naming conventions
+- ❌ Missing fallback values for optional integration points

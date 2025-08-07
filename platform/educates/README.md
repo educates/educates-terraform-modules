@@ -11,6 +11,21 @@ This module will:
 - Create the required Educates Configuration (based of provided variables) and save the configuration in a Secret in the aforementioned namespace
 - Create the Educates Carvel App properly configured. It will have an overlay so that kapp-controller, if enabled in config, is removed.
 
+## Critical Dependencies
+
+### kubectl Provider Dependency
+
+This module **requires** the `alekc/kubectl` provider due to the following critical features that are not available in the official `hashicorp/kubernetes` provider:
+
+1. **Advanced Wait Conditions**: Field-based waiting for complex status conditions (e.g., `ReconcileSucceeded`)
+2. **YAML Manifest Support**: Direct deployment of complex YAML manifests including Custom Resource Definitions (CRDs)
+3. **Multi-document Processing**: Handling of multi-document YAML files like kapp-controller's release.yml
+4. **Custom Resource Support**: Deployment of kapp-controller's custom resources (`App`, `PackageInstall`, etc.)
+
+**Version Pinning**: The kubectl provider is pinned to version `~> 2.1.3` for stability. This version has been tested and verified to work with the educates deployment workflow.
+
+**Migration Limitation**: This module cannot be migrated to the official `hashicorp/kubernetes` provider without losing critical functionality for deploying and managing the kapp-controller-based application stack.
+
 ## Configure Educates
 
 Either use provided terraform variables and by selecting the `infrastructure_provider` Educates will be configured with it's default opinions, or
@@ -30,14 +45,16 @@ These variables allow the module to use the actual service account emails from t
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | 2.1.3 |
+| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 2.1.3 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.11 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | 2.1.3 |
-| <a name="provider_time"></a> [time](#provider\_time) | n/a |
+| <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 2.1.3 |
+| <a name="provider_time"></a> [time](#provider\_time) | ~> 0.11 |
 
 ## Modules
 

@@ -10,6 +10,42 @@ These are not versioned.
 - [gke](./root-modules/educates-on-gke/)
 - [eks](./root-modules/educates-on-eks/)
 
+## Testing
+
+This repository includes a comprehensive testing framework to ensure reliability and compatibility:
+
+### Quick Start
+
+```bash
+# Run unit tests
+cd tests/unit
+go test -v ./...
+
+# Run provider compatibility tests
+./scripts/monitor-kubectl-provider.sh
+
+# View testing documentation
+cat tests/README.md
+```
+
+### Test Categories
+
+- **Unit Tests**: Individual module functionality testing
+- **Integration Tests**: End-to-end workflow testing using Kind clusters
+- **Provider Compatibility Tests**: kubectl provider version monitoring
+- **Configuration Validation**: Variable validation and default testing
+
+### Critical Dependencies
+
+The educates platform module has a **critical dependency** on the `alekc/kubectl` provider due to advanced features not available in the official `hashicorp/kubernetes` provider:
+
+- Advanced wait conditions with field-based waiting
+- YAML manifest support for complex CRDs
+- Multi-document YAML processing
+- Custom resource deployment capabilities
+
+For detailed testing information, see [TESTING_STRATEGY.md](./TESTING_STRATEGY.md) and [tests/README.md](./tests/README.md).
+
 ## Configuration examples
 
 In each of the root modules you will see `examples` directories.
