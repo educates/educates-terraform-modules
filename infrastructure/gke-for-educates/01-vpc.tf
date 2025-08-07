@@ -1,18 +1,7 @@
-data "google_compute_zones" "this" {
-  region  = var.region
-  project = var.project_id
-}
-
 locals {
   network_ip_cidr_range  = "10.0.0.0/24"
   subnet_types           = ["pods", "services"]
   subnets_ip_cidr_ranges = ["10.1.0.0/16", "10.2.0.0/20"]
-  zones                  = data.google_compute_zones.this.names
-  zone                   = slice(local.zones, 0, 1)
-}
-
-output "zones" {
-  value = local.zone
 }
 
 module "vpc" {

@@ -5,7 +5,8 @@ provider "google" {
 
 module "gke_for_educates" {
   source = "../../infrastructure/gke-for-educates"
-  # source = "github.com/educates/educates-terraform-modules.git//infrastructure/gke-for-educates?ref=develop"
+  # source = "github.com/educates/educates-terraform-modules.git//infrastructure/gke-for-educates"
+  # version = "~> 1.0"
 
   project_id         = var.project_id
   region             = var.region
@@ -31,7 +32,8 @@ module "educates" {
   count = var.deploy_educates ? 1 : 0
 
   source = "../../platform/educates"
-  # source           = "github.com/educates/educates-terraform-modules.git//platform/educates?ref=develop"
+  # source           = "github.com/educates/educates-terraform-modules.git//platform/educates"
+  # version = "~> 1.0"
   wildcard_domain = "${var.cluster_name}.${var.TLD}"
   educates_config = {
     version = var.educates_version
@@ -41,12 +43,15 @@ module "educates" {
     cluster_name = var.cluster_name
     project      = var.project_id
     dns_zone     = var.TLD
+    certmanager_service_account = module.gke_for_educates.gke.certmanager_service_account
+    externaldns_service_account = module.gke_for_educates.gke.externaldns_service_account
   }
 }
 
 module "token-sa-kubeconfig" {
   source = "../../infrastructure/token-sa-kubeconfig"
-  # source = "github.com/educates/educates-terraform-modules.git//infrastructure/token-sa-kubeconfig?ref=develop"
+  # source = "github.com/educates/educates-terraform-modules.git//infrastructure/token-sa-kubeconfig"
+  # version = "~> 1.0"
 
   cluster = {
     name                   = var.cluster_name

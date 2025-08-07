@@ -63,13 +63,17 @@ variable "aws_config" {
 #####
 variable "gcp_config" {
   type = object({
-    cluster_name = string
-    project      = string
-    dns_zone     = string
+    cluster_name                = string
+    project                     = string
+    dns_zone                    = string
+    certmanager_service_account = optional(string, "")
+    externaldns_service_account = optional(string, "")
   })
   default = {
-    cluster_name = ""
-    project      = ""
-    dns_zone     = ""
+    cluster_name                = ""
+    project                     = ""
+    dns_zone                    = ""
+    certmanager_service_account = ""
+    externaldns_service_account = ""
   }
 }

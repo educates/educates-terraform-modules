@@ -1,6 +1,11 @@
 # google_client_config and kubernetes provider must be explicitly specified like the following.
 data "google_client_config" "default" {}
 
+data "google_compute_zones" "this" {
+  region  = var.region
+  project = var.project_id
+}
+
 # resource "terraform_data" "delete_resources_after_cluster_deleted" {
 #   triggers_replace = {
 #     # Monitoring for cluster_endpoint will trigger this when cluster_endpoint changes.
@@ -16,25 +21,35 @@ data "google_client_config" "default" {}
 
 
 # resource "time_sleep" "wait_for_cluster_deletion" {
-#   # We use this to order destruction
+#   # We use this to order destruction
 #   destroy_duration = "30s"
 
-#   # We don't make module.eks depends on this because it gives problems, but rather resource aws_eks_addon.ebs-csi
+#   # We don't make module.eks depends on this because it gives problems, but rather resource aws_eks_addon.ebs-csi
 #   depends_on = [terraform_data.delete_resources_after_cluster_deleted]
 # }
 
-resource "google_service_account" "default" {
-  account_id   = var.cluster_name
-  display_name = "Service Account created by TF for cluster ${var.cluster_name}"
-  project      = var.project_id
-}
-
-// TODO: Merge service account in node pools
 locals {
+  # Ensure service account IDs are valid (6-30 chars, lowercase, alphanumeric + hyphens)
+  # and unique by using a truncated cluster name with suffix
+  cluster_name_safe = lower(replace(var.cluster_name, "_", "-"))
+  base_account_id = substr(local.cluster_name_safe, 0, 30)
+  cert_manager_account_id = substr("${local.cluster_name_safe}-cert-mgr", 0, 30)
+  external_dns_account_id = substr("${local.cluster_name_safe}-ext-dns", 0, 30)
+
+  # Zone configuration from VPC module
+  zones = data.google_compute_zones.this.names
+  zone  = slice(local.zones, 0, 1)
+
   # We can use to configure the defaults when no value is specified
   node_pools = [
     for ng in var.node_groups : merge(ng, { service_account = google_service_account.default.email })
   ]
+}
+
+resource "google_service_account" "default" {
+  account_id   = local.base_account_id
+  display_name = "Service Account created by TF for cluster ${var.cluster_name}"
+  project      = var.project_id
 }
 
 output "node_pools" {
@@ -180,15 +195,15 @@ module "gke" {
   }
 }
 
-## Create 2 service GKE accounts for cert-manager and external-dns
+## Create 2 service GKE accounts for cert-manager and external-dns
 resource "google_service_account" "cert-manager-gsa" {
-  account_id   = "${var.cluster_name}-cert-manager"
+  account_id   = local.cert_manager_account_id
   display_name = "Service Account created by TF for cert-manager for cluster ${var.cluster_name}"
   project      = var.project_id
 }
 
 resource "google_service_account" "external-dns-gsa" {
-  account_id   = "${var.cluster_name}-external-dns"
+  account_id   = local.external_dns_account_id
   display_name = "Service Account created by TF for external-dns for cluster ${var.cluster_name}"
   project      = var.project_id
 }

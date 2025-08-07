@@ -14,7 +14,11 @@ output "gke" {
 
 output "kubeconfig_file" {
   value       = local.kubeconfig_filename
-  description = "kubeconfig full path for the AWS EKS cluster"
+  description = "kubeconfig full path for the GKE cluster"
+}
+
+output "zones" {
+  value = local.zone
 }
 
 # # Some inspiration from: https://github.com/TykTechnologies/tyk-performance-testing/blob/main/modules/clouds/aws/main.tf
