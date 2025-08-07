@@ -1,9 +1,3 @@
-provider "kubernetes" {
-  host                   = var.cluster.host
-  token                  = var.cluster.token
-  cluster_ca_certificate = var.cluster.cluster_ca_certificate
-}
-
 resource "kubernetes_namespace" "automation" {
   count = var.create_namespace ? 1 : 0
   metadata {

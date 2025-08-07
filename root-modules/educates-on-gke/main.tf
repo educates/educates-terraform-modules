@@ -48,6 +48,15 @@ module "educates" {
   }
 }
 
+# Configure kubernetes provider for the 
+# token-sa-kubeconfig module
+provider "kubernetes" {
+  host                   = module.gke_for_educates.kubernetes.host
+  token                  = module.gke_for_educates.kubernetes.token
+  cluster_ca_certificate = module.gke_for_educates.kubernetes.cluster_ca_certificate
+}
+
+
 module "token-sa-kubeconfig" {
   source = "../../infrastructure/token-sa-kubeconfig"
   # source = "github.com/educates/educates-terraform-modules.git//infrastructure/token-sa-kubeconfig"
