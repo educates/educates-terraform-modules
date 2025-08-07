@@ -17,6 +17,15 @@ Either use provided terraform variables and by selecting the `infrastructure_pro
 you can provide a a variable `educates_config.config_file` with Educates Configuration format that will be merged with the default module configuration
 (overriding those values that overlap), or will replace the complete configuration if `educates_config.config_is_to_be_merged` is `False`.
 
+### GCP Configuration
+
+When using `infrastructure_provider = "gcp"`, the module can automatically configure workload identity for cert-manager and external-dns services:
+
+- `certmanager_service_account`: Optional. The full email of the Google Service Account for cert-manager workload identity. If not provided, defaults to `{cluster_name}-cert-mgr@{project}.iam.gserviceaccount.com`
+- `externaldns_service_account`: Optional. The full email of the Google Service Account for external-dns workload identity. If not provided, defaults to `{cluster_name}-ext-dns@{project}.iam.gserviceaccount.com`
+
+These variables allow the module to use the actual service account emails from the GKE infrastructure module, ensuring consistency when service account names are truncated for length constraints.
+
 ## Requirements
 
 | Name | Version |
@@ -59,7 +68,7 @@ you can provide a a variable `educates_config.config_file` with Educates Configu
 | <a name="input_aws_config"></a> [aws\_config](#input\_aws\_config) | TODO: Make these into a struct #### AWS #### | <pre>object({<br/>    account_id   = string<br/>    cluster_name = string<br/>    region       = string<br/>    dns_zone     = string<br/>  })</pre> | <pre>{<br/>  "account_id": "",<br/>  "cluster_name": "",<br/>  "dns_zone": "",<br/>  "region": ""<br/>}</pre> | no |
 | <a name="input_educates_app"></a> [educates\_app](#input\_educates\_app) | n/a | <pre>object({<br/>    namespace   = optional(string, "package-installs")<br/>    sync_period = optional(string, "8760h0m0s")<br/>  })</pre> | `{}` | no |
 | <a name="input_educates_config"></a> [educates\_config](#input\_educates\_config) | n/a | <pre>object({<br/>    installer_oci_image    = optional(string, "ghcr.io/educates/educates-installer")<br/>    version                = optional(string, "3.3.2")<br/>    config_file            = optional(string, "educates-app-config.yaml")<br/>    config_is_to_be_merged = optional(bool, true)<br/>    install                = optional(bool, true)<br/>  })</pre> | `{}` | no |
-| <a name="input_gcp_config"></a> [gcp\_config](#input\_gcp\_config) | #### GCP #### | <pre>object({<br/>    cluster_name = string<br/>    project      = string<br/>    dns_zone     = string<br/>  })</pre> | <pre>{<br/>  "cluster_name": "",<br/>  "dns_zone": "",<br/>  "project": ""<br/>}</pre> | no |
+| <a name="input_gcp_config"></a> [gcp\_config](#input\_gcp\_config) | #### GCP #### | <pre>object({<br/>    cluster_name                = string<br/>    project                     = string<br/>    dns_zone                    = string<br/>    certmanager_service_account = optional(string, "")<br/>    externaldns_service_account = optional(string, "")<br/>  })</pre> | <pre>{<br/>  "certmanager_service_account": "",<br/>  "cluster_name": "",<br/>  "dns_zone": "",<br/>  "externaldns_service_account": "",<br/>  "project": ""<br/>}</pre> | no |
 | <a name="input_infrastructure_provider"></a> [infrastructure\_provider](#input\_infrastructure\_provider) | Infrastructure provider | `string` | n/a | yes |
 | <a name="input_wildcard_domain"></a> [wildcard\_domain](#input\_wildcard\_domain) | Wildcard domain to use for services deployed in the cluster | `string` | n/a | yes |
 

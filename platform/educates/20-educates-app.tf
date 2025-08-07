@@ -114,8 +114,8 @@ locals {
           zone = "${var.gcp_config.dns_zone}"
         }
         workloadIdentity = {
-          external-dns = "${var.gcp_config.cluster_name}-external-dns@${var.gcp_config.project}.iam.gserviceaccount.com"
-          cert-manager = "${var.gcp_config.cluster_name}-cert-manager@${var.gcp_config.project}.iam.gserviceaccount.com"
+          external-dns = var.gcp_config.externaldns_service_account != "" ? var.gcp_config.externaldns_service_account : "${var.gcp_config.cluster_name}-ext-dns@${var.gcp_config.project}.iam.gserviceaccount.com"
+          cert-manager = var.gcp_config.certmanager_service_account != "" ? var.gcp_config.certmanager_service_account : "${var.gcp_config.cluster_name}-cert-mgr@${var.gcp_config.project}.iam.gserviceaccount.com"
         }
       }
     }
