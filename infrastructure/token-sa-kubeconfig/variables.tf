@@ -4,7 +4,6 @@ variable "cluster" {
     name                   = string
     host                   = string
     cluster_ca_certificate = string
-    token                  = string
   })
 }
 
