@@ -1,0 +1,39 @@
+deployment_flavor = "single-node"
+
+# Connection & Auth
+proxmox_nodes = ["pve01", "pve02"] # Array begins in position 0
+proxmox_endpoint  = "https://192.168.80.200:8006/"
+proxmox_api_token = "terraform-user@pve!TF-Token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+proxmox_node      = "proxmox-server"
+
+# Storage & Images
+proxmox_image_datastore = {
+  name   = "local"
+  shared = false
+}
+proxmox_vm_datastore    = {
+  name = "data-vms"
+  shared = false
+}
+
+cloud_image_url       = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+
+# SSH Paths
+ssh_key_path         = "~/.ssh/id_ed25519.pub"
+ssh_private_key_path = "~/.ssh/id_ed25519"
+
+# Your Single-Node Definition
+kube_nodes = {
+  "educates-single-node-01" = {
+    type         = "single-node"
+    proxmox_host = 0
+    ip_address   = "192.168.80.201"
+    #mac_address  = "BC:24:11:AA:BB:CC"
+    vm_cores     = 4
+    vm_memory    = 8192
+    config_patches = [
+      "node-label: flavor=single-node"
+      # ServiceLB is ENABLED by default in k3s, so we leave it alone here.
+    ]
+  }
+}

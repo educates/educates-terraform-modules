@@ -1,0 +1,8 @@
+#cloud-config
+hostname: ${hostname}
+write_files:
+  - path: /etc/rancher/k3s/config.yaml.d/node-custom.yaml
+    content: |
+      ${extra_configs}
+runcmd:
+  - curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --write-kubeconfig-mode 644" sh -
